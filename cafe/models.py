@@ -12,11 +12,11 @@ class Cities(models.Model):
     def __str__(self):
          return self.cityname
 
-class Area(models.Model):
-    areaname = models.CharField(max_length=30)
-    
+class Areaplace(models.Model):
+    areaplacename = models.CharField(max_length=30)
+
     def __str__(self):
-         return self.areaname
+         return self.areaplacename
 
 class Cuisine(models.Model):
     cuisinename = models.CharField(max_length=30)
@@ -31,10 +31,16 @@ class Kind(models.Model):
          return self.kindname
 
 class Cafe(models.Model):
-    name = models.CharField(max_length=35)
+    name = models.CharField(max_length=100)
     kind = models.ForeignKey('Kind', on_delete=models.CASCADE)
+    city = models.ForeignKey('Cities', on_delete=models.CASCADE, null=True)
+    areaplace = models.ForeignKey('Areaplace', on_delete=models.CASCADE, null=True)
     cuisines = models.ManyToManyField(Cuisine)
-    rating = models.FloatField(validators = [MinValueValidator(0.0), MaxValueValidator(5.0)])
+    bill = models.IntegerField(null=True)
+    rating = models.FloatField(null=True)
+    parking = models.NullBooleanField()
+    formatted_address = models.CharField(max_length=200, null=True)
+    created_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
          return self.name
