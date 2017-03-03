@@ -30,6 +30,11 @@ class Kind(models.Model):
 	def __str__(self):
          return self.kindname
 
+class Photo(models.Model):
+    photourl = models.CharField(max_length=500)
+    def __str__(self):
+         return self.photourl
+
 class Cafe(models.Model):
     name = models.CharField(max_length=100)
     kind = models.ForeignKey('Kind', on_delete=models.CASCADE)
@@ -38,6 +43,7 @@ class Cafe(models.Model):
     cuisines = models.ManyToManyField(Cuisine)
     bill = models.IntegerField(null=True)
     rating = models.FloatField(null=True)
+    photos = models.ManyToManyField(Photo, blank=True)
     parking = models.NullBooleanField()
     formatted_address = models.CharField(max_length=200, null=True)
     created_date = models.DateTimeField(default=timezone.now)
