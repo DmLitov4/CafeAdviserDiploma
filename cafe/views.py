@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from django.conf import settings
+from django.apps import AppConfig
 from decimal import Decimal
 from .models import Cities, Cuisine, Kind, Cafe, Areaplace, Photo
 from decimal import Decimal
 from urllib.request import urlopen
+from django.contrib.auth.decorators import login_required
 from itertools import islice
+import login
 import time, xmltodict, json, codecs, re
 from django_google_places.models import Place
 from django_google_places.api import google_places
@@ -104,7 +107,7 @@ def load_cafes_from_google_api():
              return ''
          my_key = settings.GOOGLE_PLACES_API_KEY
          google_places = GooglePlaces(my_key)
-         queries=['рестораны ростов', 'кафе ростов', 'бары ростов']
+         queries=['subway ростов']
          for q in queries:
              query_result = google_places.text_search(query=q, radius=25000, language=lang.RUSSIAN, types=[types.TYPE_FOOD, types.TYPE_CAFE, types.TYPE_RESTAURANT])
              for place in query_result.places:
@@ -155,10 +158,22 @@ def load_cafes_from_google_api():
                                  print(p.url)
                          except IndexError:
                              pass
-                         caf.save()
+                         
                      except UnicodeEncodeError:
                          pass
 
+def get_cafe_list():
+    return Cafe.objects.order_by('rating').reverse()[:12]
+
+def get_latest_list():
+    return Cafe.objects.order_by('created_date').reverse()[:4]
+
 def start_page(request):
     cafe_list = load_cafes_from_google_api()
-    return render(request, 'cafe/start_page.html', {'cafe_list': cafe_list})
+    latest_list = get_latest_list()
+    return render(request, 'cafe/start_page.html', {'cafe_list': cafe_list, 'latest_list': latest_list})
+
+@login_required(login_url='/')
+def places(request):
+    all_cafes = get_cafe_list()
+    return render(request, 'cafe/places.html', {'all_cafes': all_cafes})

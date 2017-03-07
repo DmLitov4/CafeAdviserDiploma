@@ -46,6 +46,7 @@ class Cafe(models.Model):
     photos = models.ManyToManyField(Photo, blank=True)
     parking = models.NullBooleanField()
     formatted_address = models.CharField(max_length=200, null=True)
+    website = models.CharField(max_length=100, null=True)
     created_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

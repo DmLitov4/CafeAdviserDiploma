@@ -149,19 +149,19 @@ ul.navbar-nav li a:hover i, ul.navbar-nav li a:focus i { color: #fff; }
 .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus { background: #f8f8f8; color: #FFCC33; }
 
 ul.navbar-nav li .dropdown-menu a { padding-top: 15px; padding-bottom: 15px; }
-ul.navbar-nav li.active .dropdown-menu a { background: #f3f3f3; color: #5d5d5d; border: 0; }
+ul.navbar-nav li.active .dropdown-menu a { background: #f3f3f3; color: #000000; border: 0; }
 ul.navbar-nav li.active .dropdown-menu a:hover, 
-ul.navbar-nav li.active .dropdown-menu a:focus { background: #FF000A; color: #fff; border: 0; }
+ul.navbar-nav li.active .dropdown-menu a:focus { background: #f8f8f8; color: #000000; border: 0; }
 
-ul.navbar-nav li.active .dropdown-menu > .active > a { background: #f8f8f8; color: #FFCC33; border: 0; }
+ul.navbar-nav li.active .dropdown-menu > .active > a { background: #f8f8f8; color: #000000; border: 0; }
 ul.navbar-nav li.active .dropdown-menu > .active > a:hover, 
-ul.navbar-nav li.active .dropdown-menu > .active > a:focus { background: #FF000A; color: #fff; border: 0; }
+ul.navbar-nav li.active .dropdown-menu > .active > a:focus { background: #f8f8f8; color: #000000; border: 0; }
 
 .navbar>.container .navbar-brand { margin-left: 0; }
 
 .navbar-brand {
-	width: 400px;
-	height: 62px;
+	width: 300px;
+	height: 60px;
 	background: url(../img/logo.png) left center no-repeat;
 	text-indent: -99999px;
 }
@@ -705,7 +705,7 @@ footer {
 .contact-form textarea { width: 95%; height: 170px; padding-top: 6px; padding-bottom: 6px; }
 .contact-form label { font-size: 13px; font-weight: 400; }
 .contact-form label .error-label { font-style: italic }
-.contact-form button { margin-top: 5px; padding: 0 45px; }
+.contact-form button { margin-top: 5px; padding: 0 45px;}
 
 /***** Google map *****/
 
