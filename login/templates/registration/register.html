@@ -19,7 +19,7 @@
                         <h3 class="panel-title">Регистрация пользователя</h3>
                     </div>
                     <div class="panel-body">
-                        <form method="post" action=".">
+                        <form enctype="multipart/form-data" method="post" action=".">
                             {% csrf_token %}
                         <center>
                             <p class="bs-component">
@@ -29,11 +29,31 @@
                                     </tr>
                                     <tr>                                        
                                         <td>{{ form.email | bootstrap}}</td>
-                                    <tr>                                     
+                                    </tr>
+                                    <tr>                                        
+                                        <td>{{ form.firstname | bootstrap}}</td>
+                                    </tr>                      
+                                    <tr>                                        
+                                        <td>{{ form.lastname | bootstrap}}</td>
+                                    </tr>               
+                                    <tr>                                        
+                                        <td>{{ form.age | bootstrap}}</td>
+                                    </tr>
+                                    <tr>                                        
+                                        <td>{{ form.gender | bootstrap}}</td>
+                                    </tr>
+                                    <tr>                                        
+                                        <td>{{ form.city | bootstrap}}</td>
+                                    </tr>
+                                    <tr>
                                         <td>{{ form.password1 | bootstrap}}</td>
                                     </tr>
                                     <tr>                               
                                         <td>{{ form.password2 | bootstrap}}</td>
+                                    </tr>
+                                    <tr>
+                                    </br>
+                                        <td><input id="id_image" type="file" class="" name="image"></td>
                                     </tr>
                                 </table>
                             </p>

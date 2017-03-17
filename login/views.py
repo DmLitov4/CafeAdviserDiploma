@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from login.forms import *
+from login.models import *
+from cafe.models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
@@ -10,14 +12,28 @@ from django.template import RequestContext
 @csrf_protect
 def register(request):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = User.objects.create_user(
             username=form.cleaned_data['username'],
             password=form.cleaned_data['password1'],
+            first_name=form.cleaned_data['firstname'],
+            last_name=form.cleaned_data['lastname'],
             email=form.cleaned_data['email']
             )
-            return HttpResponseRedirect('/register/success/')
+            u = User.objects.get(username=form.cleaned_data['username'])
+            c = Cities.objects.get(cityname=form.cleaned_data['city'])
+            usersetting = UserSettings.objects.create(
+            user = u,
+            age=form.cleaned_data['age'],
+            gender=form.cleaned_data['gender'],
+            city=c.cityname,
+            avatar = form.cleaned_data['image']
+            )
+            usersetting.save()
+            return HttpResponseRedirect('success/')
+        else:
+            print("Wrong!")
     else:
         form = RegistrationForm()
     variables = RequestContext(request, {
@@ -31,7 +47,7 @@ def register(request):
  
 def register_success(request):
     return render_to_response(
-    '/success.html',
+    'registration/success.html',
     )
 
 def login_page(request):

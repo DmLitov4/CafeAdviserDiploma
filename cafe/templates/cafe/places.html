@@ -2,12 +2,25 @@
 {% block content %}
 
 {% load staticfiles %}
-{% load bootstrap_tags %}
+{% load bootstrap %}
+    
+    <script src="{% static 'sweetalert-master/dist/sweetalert.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'sweetalert-master/dist/sweetalert.css' %}"> 
+    <script>
+        $(document).ready(function(){
+            $("#hellomessage").hide()
+            $(".placestable").hide()
+            $(".placestable").fadeIn(3000);
+            $("#hellomessage").fadeIn(4000);
+        });
+    </script>
 
-    <link rel="stylesheet" href="{% static 'css/prettyPhoto.css' %}">
-    <link rel="stylesheet" href="{% static 'css/price-range.css' %}">
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script>
+        function okmessage(){
+
+            swal("Good job!", "You clicked the button!", "success");
+        }
+    </script>
 
     <header id="header"><!--header-->
             
@@ -16,12 +29,17 @@
                 <li><a href="/">Главная</a></li>
                 <li class="active">Места</li>
             </ol>
-                    
+            
+            <h4 id="hellomessage"> Добро пожаловать, {{ request.user.username }}!</h4>
+
             <div style="float:right" class="search_box pull-right">
-                <input style="float:right" type="text" placeholder="Поиск"/>
+                <form id="search">
+                  <input style="float:right; margin-right:15px" type='text' id='searchText' placeholder="Поиск"/>
+                  <input style="display:none" type='submit' value='Search' />
+                </form>
             </div>
         </div>              
-            
+
     </header>
 
     <section>
@@ -29,192 +47,214 @@
             <div class="row">
                 <div class="col-sm-3">
                     <div style="margin-top:35px" class="left-sidebar">
-                        <h2>Тип заведения</h2>
-                        <div class="panel-group category-products" id="accordian">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordian" href="#sportswear">
-                                            <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                            Sportswear
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="sportswear" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        <ul>
-                                            <li><a href="">Nike </a></li>
-                                            <li><a href="">Under Armour </a></li>
-                                            <li><a href="">Adidas </a></li>
-                                            <li><a href="">Puma</a></li>
-                                            <li><a href="">ASICS </a></li>
-                                        </ul>
+                        <h2>Критерии</h2>
+
+                        <form method="post" action=".">
+                            {% csrf_token %}
+                            <div class="panel-group category-products" id="accordian">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse"  href="#kinds">
+                                                <span class="badge pull-right"></span>
+                                                Тип заведения:
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="kinds" class="panel-collapse collapse">
+                                        <div class="leftpos">
+                                            <ul>
+                                                {{ form.kind | bootstrap }}
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordian" href="#mens">
-                                            <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                            Mens
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="mens" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        <ul>
-                                            <li><a href="">Fendi</a></li>
-                                            <li><a href="">Guess</a></li>
-                                            <li><a href="">Valentino</a></li>
-                                            <li><a href="">Dior</a></li>
-                                            <li><a href="">Versace</a></li>
-                                            <li><a href="">Armani</a></li>
-                                            <li><a href="">Prada</a></li>
-                                            <li><a href="">Dolce and Gabbana</a></li>
-                                            <li><a href="">Chanel</a></li>
-                                            <li><a href="">Gucci</a></li>
-                                        </ul>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse"  href="#cities">
+                                                <span class="badge pull-right"></span>
+                                                Город:
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="cities" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                {{ form.city | bootstrap }}
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordian" href="#womens">
-                                            <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                            Womens
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="womens" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        <ul>
-                                            <li><a href="">Fendi</a></li>
-                                            <li><a href="">Guess</a></li>
-                                            <li><a href="">Valentino</a></li>
-                                            <li><a href="">Dior</a></li>
-                                            <li><a href="">Versace</a></li>
-                                        </ul>
+                                
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" href="#areas">
+                                                <span class="badge pull-right"></span>
+                                                Район: 
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="areas" class="panel-collapse collapse">
+                                        <div class="leftpos">
+                                            <ul>
+                                                {{ form.area | bootstrap }}
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#">Kids</a></h4>
+                                
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse"  href="#cuisines">
+                                                <span class="badge pull-right"></span>
+                                                Кухни: 
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="cuisines" class="panel-collapse collapse">
+                                        <div class="leftpos">
+                                            <ul>
+                                                {{ form.cuisine | bootstrap }}
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#">Fashion</a></h4>
+
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse"  href="#parking">
+                                                <span class="badge pull-right"></span>
+                                                Парковка: 
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="parking" class="panel-collapse collapse">
+                                        <div class="leftpos">
+                                            <ul>
+                                                {{ form.parking | bootstrap }}
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#">Households</a></h4>
+
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" href="#priceran">
+                                                <span class="badge pull-right"></span>
+                                                Средний чек:  
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="priceran">
+                                        <div class="price-range"><!--price-range-->
+                                            <div class="well">
+                                                <input type="text" name="price" class="span2" value="" data-slider-min="0" data-slider-max="10000" data-slider-step="50" data-slider-value="[100, 9900]" id="sl2" ><br/>
+                                         <b>0</b> <b class="pull-right">10000</b>
+                                            </div>
+                                        </div><!--/price-range-->
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#">Interiors</a></h4>
+                                
+                                <div>
+                                    <input class="button" style="margin-top:10px" type="submit" value="Подобрать" />
                                 </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#">Clothing</a></h4>
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#">Bags</a></h4>
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#">Shoes</a></h4>
-                                </div>
-                            </div>
-                        </div><!--/category-productsr-->
-                    
-                        <div class="brands_products"><!--brands_products-->
-                            <h2>Brands</h2>
-                            <div class="brands-name">
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li><a href=""> <span class="pull-right">(50)</span>Acne</a></li>
-                                    <li><a href=""> <span class="pull-right">(56)</span>Grüne Erde</a></li>
-                                    <li><a href=""> <span class="pull-right">(27)</span>Albiro</a></li>
-                                    <li><a href=""> <span class="pull-right">(32)</span>Ronhill</a></li>
-                                    <li><a href=""> <span class="pull-right">(5)</span>Oddmolly</a></li>
-                                    <li><a href=""> <span class="pull-right">(9)</span>Boudestijn</a></li>
-                                    <li><a href=""> <span class="pull-right">(4)</span>Rösch creative culture</a></li>
-                                </ul>
-                            </div>
-                        </div><!--/brands_products-->
-                        
-                        <div class="price-range"><!--price-range-->
-                            <h2>Средний чек</h2>
-                            <div class="well">
-                                 <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="15000" data-slider-step="100" data-slider-value="[250,450]" id="sl2" ><br />
-                                 <b>0</b> <b class="pull-right">15000</b>
-                            </div>
-                        </div><!--/price-range-->
-                     
+                            </div><!--/category-productsr-->  
+                        </form>        
                     </div>
                 </div>
-
-                <div class="col-sm-9 padding-right">
+                
+                <div style="display:none" class="placestable col-sm-9 padding-right">
                     <div class="features_items"><!--features_items-->
                         <h2 class="title text-center">Предложенные Вам: </h2>
                         {% for cafe in all_cafes %}
                             <div class="col-sm-4">
-                                <div class="product-image-wrapper">
+                                <div id="wrap" class="product-image-wrapper">
                                     <div class="single-products">
                                         <div class="productinfo text-center">
                                             {% if cafe.photos.all.0 %}
-                                                <img src={{ cafe.photos.all.0}} height="200" width="500" alt="ok" />
+                                                <img src={{ cafe.photos.all.0 }} alt="ok" style="border-radius: 10px; object-fit: cover; height:190px; width:490px"/>
                                             {% else %}
-                                                <img src="../img/noimage.jpg">
+                                                <img src="{% static 'img/noimage.jpg' %}" height="190" width="390" style="border-radius: 10px;" alt="noimage">
                                             {% endif %}
                                             <h2> {{ cafe.rating }} </h2>
-                                            <p><b>{{ cafe.name }}</b></p>
-                                            <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Подробнее</a>
+                                            <span class="nowrap">{{ cafe.name }}</span>
+                                            <p> </p>
+                                            <p> </p>
+                                            <p><a href="{{cafe.id}}" class="btn btn-default add-to-cart">Подробнее</a></p>
                                         </div>
                                         <div class="product-overlay">
                                             <div class="overlay-content">
-                                                <h2>{{ cafe.rating }}</h2>
-                                                <p>{{ cafe.name }}</p>
-                                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Подробнее</a>
+                                                {% if cafe.kind.kindname == "ресторан" %}
+                                                    <p><img src="{% static 'img/icon.png' %}" height="64" width="64" alt="type" style="border-radius: 10px;"/></p>         
+                                                {% elif cafe.kind.kindname == "пиццерия" %}
+                                                    <p><img src="{% static 'img/pizza.png' %}" height="68" width="68" alt="type" style="border-radius: 10px;"/></p>
+                                                {% elif cafe.kind.kindname == "бар" %}
+                                                    <p><img src="{% static 'img/wine.png' %}" height="68" width="68" alt="type" style="border-radius: 10px;"/></p>
+                                                {% elif cafe.kind.kindname == "паб" %}
+                                                    <p><img src="{% static 'img/beer.png' %}" height="64" width="64" alt="type" style="border-radius: 10px;"/></p>
+                                                {% else %}
+                                                    <p><img src="{% static 'img/cafe.png' %}" height="68" width="68" alt="type" style="border-radius: 10px;"/></p>
+                                                {% endif %}
+                                                <p>{{cafe.name}}</p>
+                                                <p><h2>{{ cafe.rating }}</h2></p>
+                                                <p>{{cafe.formatted_address}}</p>
+                                                
+                                                <a href="{{cafe.id}}" class="btn btn-default add-to-cart">Подробнее</a>
+                                                
                                             </div>
                                         </div>
                                     </div>
                                     <div class="choose">
-                                        <ul class="nav nav-pills nav-justified">
-                                            <li><a href=""><i class="fa fa-plus-square"></i>Добавить в любимые</a></li>
-                                            <li><a href=""><i class="fa fa-plus-square"></i>Просмотреть позже</a></li>
+                                        <ul class="nav nav-pills nav-justified">                   
+                                                <li>
+                                                    <form onsubmit="okmessage()" method="POST" action="." id="like">
+                                                    {% csrf_token %}
+                                                        <input name='cafeid' style="display:none" type="text" value={{ cafe.id }}  />
+                                                        <input style="margin-top:10px; margin-bottom:10px; background-color:white; border-width: 0" name='liked' value="Мне нравится" style="background-color:white; border-width: 0;" type="submit"><img src="{% static 'img/like.png'%}" width='16' height='16'></button>
+                                                    </form>
+                                                </li>
+                                            <!--<li><button style="background-color:white; border-width: 0;" type="submit"><img src="{% static 'img/book.png'%}" width='39' height='39'></button></a></li>!-->
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         {% endfor %}
+
+                        <div class="pagination">
+ 
+                            {% if all_cafes.has_previous %}
+                                <a href="?page={{ articles.previous_page_number }}">←</a>
+                            {% endif %}
+                         
+                            {% for num in all_cafes.paginator.page_range %}
+                                {% if num == all_cafes.number %}
+                                    <span class="current"><b>{{ num }}</b></span>
+                                {% else %}
+                                    <a href="?page={{ num }}"> {{ num }}</a>
+                                {% endif %} 
+                            {% endfor %}
+                         
+                            {% if all_cafes_list.has_next %}
+                                <a href="?page={{ article_list.next_page_number }}">→</a>
+                            {% endif %}
+                         
+                        </div>
                         
-                        <ul class="pagination">
-                            <li class="active"><a href="">1</a></li>
-                            <li><a href="">2</a></li>
-                            <li><a href="">3</a></li>
-                            <li><a href="">&raquo;</a></li>
-                        </ul>
                     </div><!--features_items-->
                 </div>
             </div>
         </div>
     </section>
 
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
+    <script src="{% static 'js/price-range.js' %}"></script>
+    <script src="{% static 'js/jquery.scrollUp.min.js' %}"></script>
+    <script src="{% static 'js/jquery.prettyPhoto.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
 
 
 {% endblock %}

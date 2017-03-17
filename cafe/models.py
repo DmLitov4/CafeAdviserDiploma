@@ -40,13 +40,13 @@ class Cafe(models.Model):
     kind = models.ForeignKey('Kind', on_delete=models.CASCADE)
     city = models.ForeignKey('Cities', on_delete=models.CASCADE, null=True)
     areaplace = models.ForeignKey('Areaplace', on_delete=models.CASCADE, null=True)
-    cuisines = models.ManyToManyField(Cuisine)
+    cuisines = models.ManyToManyField(Cuisine, null=True, blank=True)
     bill = models.IntegerField(null=True)
     rating = models.FloatField(null=True)
     photos = models.ManyToManyField(Photo, blank=True)
     parking = models.NullBooleanField()
     formatted_address = models.CharField(max_length=200, null=True)
-    website = models.CharField(max_length=100, null=True)
+    website = models.CharField(max_length=100, null=True, blank=True)
     created_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

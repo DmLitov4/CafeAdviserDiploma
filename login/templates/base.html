@@ -27,6 +27,7 @@
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
+        
         <title>CafeAdviser - лучшие места Вашего города |
         {% block title %}{% endblock %}</title>
     </head>
@@ -55,17 +56,16 @@
                                 <li><a href="/">Дополнительная информация</a></li>
                             </ul>
                         </li>
-                        <li>
-                            <a href="/"><br>Места</a>
-                        </li>
-                        <li>
-                            <a href="/"><br>Подобрать</a>
-                        </li>
+                        {% if user.is_authenticated %}
+                            <li>
+                                <a href="/"><br>Места</a>
+                            </li>
+                            <li>
+                                <a href="/"><br>Подобрать</a>
+                            </li>
+                        {% endif %}
                         <li>
                             <a href="/"></i><br>Отзывы</a>
-                        </li>
-                        <li>
-                            <a href="/"><br>Контакты</a>
                         </li>
                         <li class="dropdown active">
                             {% if user.is_authenticated %}                            

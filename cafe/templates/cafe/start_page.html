@@ -26,7 +26,13 @@
         <link rel="stylesheet" href="{% static 'css/flexslider.css' %}">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>   
-
+        
+        <script>
+            $(document).ready(function(){
+                $(".slider-container").hide()
+                $(".slider-container").fadeIn(2500);
+            });
+        </script>
         <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -39,7 +45,7 @@
         <!-- Меню -->
 		
         <!-- Слайдер -->
-        <div class="slider-container">
+        <div style="display:none" class="slider-container">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-10 col-sm-offset-1 slider">
@@ -120,7 +126,7 @@
 		                <div class="service wow fadeInDown">
 		                    <div class="service-icon"></div>
 		                    <h3>Находите друзей</h3>
-		                    <p>Общайтесь с пользователями и обменивайтесь мнениями.ы</p>
+		                    <p>Общайтесь с пользователями и обменивайтесь мнениями.</p>
 		                    <a class="big-link-1" href="services.html">Узнать больше</a>
 		                </div>
 	                </div>
@@ -140,10 +146,10 @@
                     {% for cafe in latest_list %}
     	            	<div class="col-sm-3">
     		                <div class="work wow fadeInUp">
-                                {% if not cafe.photos.all.0 == None %}
+                                {% if cafe.photos.all.0 %}
     		                        <img src="{{ cafe.photos.all.0 }}" alt="photo" height="200" width="240" data-at2x="{{ cafe.photos.all.0 }}">
                                 {% else %}
-                                    <img src="../img/noimage.jpg">
+                                    <img src="{% static 'img/noimage.jpg' %}" height="200" width="240" >
                                 {% endif %}
     		                    <h3>{{ cafe.name }}</h3>
     		                    <p>{{ cafe.rating }}</p>
