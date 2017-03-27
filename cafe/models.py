@@ -14,6 +14,7 @@ class Cities(models.Model):
 
 class Areaplace(models.Model):
     areaplacename = models.CharField(max_length=30)
+    city = models.ForeignKey('Cities', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
          return self.areaplacename
