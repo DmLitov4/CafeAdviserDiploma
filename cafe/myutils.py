@@ -1,5 +1,11 @@
 from .models import Cities, Cuisine, Kind, Cafe, Areaplace, Photo
 
+kind_weight = 120
+price_weight = 30
+area_weight = 15
+cuisine_weight = 15
+parking_weight = 5
+
 def transliterate(string):
 
     capital_letters = {u'А': u'A',
@@ -123,14 +129,17 @@ def count_weight(cuisines, areas, kinds, parking, minbill, maxbill, cafe):
     else:
         areaweight = 0 
     current_kind = cafe.kind_id
-    if current_kind in kinds:
+    print(current_kind)
+    print(kinds)
+    if str(current_kind) in kinds:
         kindweight = kind_weight
     else:
         kindweight = 0
-
-    if cafe.bill > int(minbill) and cafe.bill < int(maxbill):
-        priceweight = price_weight
-    else:
+    try:
+        if cafe.bill > int(minbill) and cafe.bill < int(maxbill):
+            priceweight = price_weight
+        else:
+            priceweight = 0
+    except:
         priceweight = 0
-
     return cuisineweight + areaweight + kindweight + priceweight

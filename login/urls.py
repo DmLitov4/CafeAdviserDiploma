@@ -3,6 +3,7 @@ from login.views import *
  
 urlpatterns = patterns('',
     url(r'^$', 'django.contrib.auth.views.login'),
+    url(r'^vkclasterization/$', vk_clasterization),
     url(r'^logout/$', logout_page),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
     url(r'^register/$', register),

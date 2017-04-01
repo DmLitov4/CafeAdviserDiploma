@@ -12,22 +12,21 @@ from django.contrib.auth.decorators import login_required
 from itertools import islice
 import functools as ft
 import numpy as np
+np.set_printoptions(threshold=np.nan)
 import time, xmltodict, json, codecs, re
 from django_google_places.models import Place
 from django_google_places.api import google_places
 from googleplaces import GooglePlaces, types, lang
 from .myutils import *
+import vk
+
+session = vk.Session(access_token=settings.VK_TOKEN)
+api = vk.API(session)
 
 search_radius = 35000
 number_of_photos = 5
 max_height = 1200
 max_width = 1000
-
-kind_weight = 37
-price_weight = 30
-area_weight = 15
-cuisine_weight = 15
-parking_weight = 5
 
 def load_cafes_from_google_api():
          if 1:
@@ -35,7 +34,7 @@ def load_cafes_from_google_api():
 
          my_key = settings.GOOGLE_PLACES_API_KEY
          google_places = GooglePlaces(my_key)
-         queries=['кафе ростов-на-дону', 'рестораны ростов-на-дону', 'бары ростов-на-дону', 'пабы ростов-на-дону']
+         queries=['кафе ростов-на-дону', 'рестораны ростов-на-дону', 'бары ростов-на-дону', 'пабы ростов-на-дону', 'кондитерские ростов-на-дону', 'пиццерии ростов-на-дону']
          for q in queries:
               try:
                  query_result = google_places.text_search(query=q, radius=search_radius, language=lang.RUSSIAN, types=[types.TYPE_FOOD, types.TYPE_CAFE, types.TYPE_RESTAURANT])
@@ -99,43 +98,46 @@ def start_page(request):
 def context_filtration(city, cuisines, areas, kinds, parking, minbill, maxbill):
     cafe_list = Cafe.objects.filter(city=city)
     selected_list = list(reversed(sorted(ft.reduce(lambda acc, x: acc + [(x, count_weight(cuisines, areas, kinds, parking, minbill, maxbill, x))], cafe_list, []), key=lambda x: x[1])))
+    print('фильтрация')
+    print(selected_list)
     return selected_list
+
+def create_cafe_vectors(userrecords):
+    statistic = []
+    for record in userrecords:
+        statistic_user = np.zeros(Cafe.objects.all().order_by("-id")[0].id + 1)
+        statistic_user[0] = record.user_id
+        for liked_cafe in record.liked.all():
+            statistic_user[liked_cafe.id] = 1
+        statistic.append(statistic_user)
+    numpy_statistic = np.array(statistic)
+    transposed_statistic = numpy_statistic.transpose()
+    cafe_statistic = np.delete(transposed_statistic, (0), axis=0)
+    k = 1
+    final_statistic=[]
+    for stat in cafe_statistic:
+        try:
+          if Cafe.objects.filter(id=k).exists():
+              stat = np.insert(stat, 0, k)
+          else:
+              stat= np.insert(stat, 0, -1)
+          final_statistic.append(stat)
+        except:
+          pass
+        k = k + 1
+    answer = np.array(final_statistic)
+    final_answer = []
+    for k in range(0, len(answer)-1):
+        if not answer[k][0] == -1.0:
+            final_answer.append(answer[k])
+    answer = np.array(final_answer)
+    np.savetxt("cafe_vectors.csv", answer.astype(int), fmt='%i', delimiter=",")
+    return answer
 
 def collaborate_filtration():
     userrecords = UserSettings.objects.all()
-    statistic = []
-    #cafe_ids = np.empty
-    #for cafe in Cafe.objects.all():
-    #    cafe_ids = np.append(cafe_ids, cafe.id)
-    #statistic.append(cafe_ids)
-    #print(statistic)
-    for record in userrecords:
-        statistic_user = np.zeros(len(Cafe.objects.all()) + 30)
-        statistic_user[0] = record.user_id
-        for liked_cafe in record.liked.all():
-            print(str(liked_cafe.id) + ' ' + str(record.user_id))
-            statistic_user[liked_cafe.id] = 1
-        statistic.append(statistic_user)
-    statistic2 = np.array(statistic)
-    print(statistic2)
-    print('****************')
-    cafe_statistic = np.delete(statistic2.transpose(), (0), axis=0)
-    #cafe_statistic = np.delete(statistic2.transpose(), (0), axis=0)
-    cafs = Cafe.objects.all()
-    k = 1
-    print('длина кафе')
-    print(len(cafe_statistic))
-
-    #for row in cafe_statistic:
-    #  try:
-    #    row = np.append(cafs[k].id, row)
-    #    print(row)
-    #    k = k + 1
-    #  except:
-    #    pass
-    #cafe_statistic = np.delete(cafe_statistic, 0, 0)  # delete second row of A
-    print(cafe_statistic)
-    #cafe_statistic.savefile
+    answer = create_cafe_vectors(userrecords)
+    
     
 
 @login_required(login_url='/')
@@ -170,10 +172,14 @@ def places(request):
             areas = request.POST.getlist('area')
             kinds = request.POST.getlist('kind')
             parking = request.POST.get('parking')
-            pricerange = request.POST.get('price')
-            p = pricerange.split(",")
-            minprice = p[0]
-            maxprice = p[1]
+            try:
+                pricerange = request.POST.get('price')
+                p = pricerange.split(",")
+                minprice = p[0]
+                maxprice = p[1]
+            except:
+                minpice = 0
+                maxprice = 10000
             selected_list = context_filtration(city, cuisines, areas, kinds, parking, minprice, maxprice)
             all_cafes = [x[0] for x in selected_list]
             paginator = Paginator(all_cafes, 12)
