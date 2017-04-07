@@ -127,6 +127,8 @@ PROJECT_DIR = os.path.dirname(__file__)
 
 GOOGLE_PLACES_API_KEY='AIzaSyCcz7PJlH_dXg6zoqMwK37lPR7tHB-2ycE'
 
+VK_TOKEN='b35945c07ddd8368fc4318d94150c99b50c5ae8102ee6c3efe64841569a522031019d148f5b2e0aebc7d4'
+
 LOGIN_REDIRECT_URL='/'
 
 # Static files (CSS, JavaScript, Images)

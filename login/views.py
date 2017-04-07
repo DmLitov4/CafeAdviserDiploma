@@ -26,11 +26,10 @@ def vk_clasterization(request):
     for u in users:
         query_string = u.user.first_name + ' ' + u.user.last_name
         print(query_string)
-        query_array = api.users.search(q=query_string, age_from=u.age, age_to=u.age, hometown=u.city, count=1, fields=['universities', 'occupation', 'military', 'music', 'tv', 'personal'])      
+        query_array = api.users.search(q=query_string, city=119, age_from=u.age, age_to=u.age, count=1, fields=['universities', 'occupation', 'military', 'music'])      
         #query_array = api.users.search(q=query_string, count=1, fields=['universities', 'occupation', 'military', 'movies', 'music', 'tv', 'personal'])
-        
         print(query_array)
-        time.sleep(1)
+        time.sleep(2)
         user_vector = []
         has_university = 0
         has_military = 0
@@ -46,8 +45,6 @@ def vk_clasterization(request):
                 if 'military' in info:
                     if len(info['military']) > 0:
                         has_military = 1
-                #if 'movies' in info:
-                    #which_movies = info['movies']
                 if 'occupation' in info:
                     if info['occupation']['type'] == 'work':
                         which_occupation = 1
@@ -59,9 +56,9 @@ def vk_clasterization(request):
                 how_many_followers = followers_array['count']          
                 if 'music' in info:
                     blob = TextBlob(info['music'].lower(), classifier = cl)
-                    print(blob)
                     music_answer = blob.classify()
-                    print(blob.classify())
+                    print(query_string)
+                    print(music_answer)
                     if music_answer == "classic":
                         which_music = 1
                     elif music_answer == "rock":
@@ -70,13 +67,11 @@ def vk_clasterization(request):
                         which_music = 3
                     elif music_answer == "pop":
                         which_music = 4
-                    print('music end')
             except KeyError:
                 pass
             user_vector = [has_university, has_military, which_music, which_occupation, how_many_followers]
         except IndexError:
             user_vector = [has_university, has_military, which_music, which_occupation, how_many_followers]
-        print('uservector: ')
         print(user_vector)
     return HttpResponseRedirect('/')
  
@@ -104,7 +99,7 @@ def register(request):
             usersetting.save()
             return HttpResponseRedirect('success/')
         else:
-            print("Wrong!")
+            print("wrong!")
     else:
         form = RegistrationForm()
     variables = RequestContext(request, {

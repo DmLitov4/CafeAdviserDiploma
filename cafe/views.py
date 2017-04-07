@@ -12,13 +12,13 @@ from django.contrib.auth.decorators import login_required
 from itertools import islice
 import functools as ft
 import numpy as np
-np.set_printoptions(threshold=np.nan)
+np.set_printoptions(threshold=np.nan, precision=4)
 import time, xmltodict, json, codecs, re
 from django_google_places.models import Place
 from django_google_places.api import google_places
 from googleplaces import GooglePlaces, types, lang
 from .myutils import *
-import vk
+import vk, math
 
 session = vk.Session(access_token=settings.VK_TOKEN)
 api = vk.API(session)
@@ -98,8 +98,6 @@ def start_page(request):
 def context_filtration(city, cuisines, areas, kinds, parking, minbill, maxbill):
     cafe_list = Cafe.objects.filter(city=city)
     selected_list = list(reversed(sorted(ft.reduce(lambda acc, x: acc + [(x, count_weight(cuisines, areas, kinds, parking, minbill, maxbill, x))], cafe_list, []), key=lambda x: x[1])))
-    print('фильтрация')
-    print(selected_list)
     return selected_list
 
 def create_cafe_vectors(userrecords):
@@ -124,25 +122,50 @@ def create_cafe_vectors(userrecords):
           final_statistic.append(stat)
         except:
           pass
-        k = k + 1
+        k += 1
     answer = np.array(final_statistic)
     final_answer = []
     for k in range(0, len(answer)-1):
-        if not answer[k][0] == -1.0:
-            final_answer.append(answer[k])
+        if (not answer[k][0] == -1.0) and (np.count_nonzero(answer[k]) > 1):
+                final_answer.append(answer[k])
     answer = np.array(final_answer)
     np.savetxt("cafe_vectors.csv", answer.astype(int), fmt='%i', delimiter=",")
     return answer
 
-def collaborate_filtration():
+def create_cafe_matrix():
     userrecords = UserSettings.objects.all()
-    answer = create_cafe_vectors(userrecords)
+    cafes = create_cafe_vectors(userrecords)
+    cafe_ids = cafes[:,0]
+    print(cafe_ids)
+    num_of_cafes = len(cafes)
+    cafe_matrix = np.zeros((num_of_cafes, num_of_cafes), np.float32)
+    np.fill_diagonal(cafe_matrix, 0)
+    for i in range(0, len(cafes)):
+        for j in range(i + 1, len(cafes)):
+            common = 0
+            count_sum = 0
+            for k in range(1, len(cafes[i])):
+                if cafes[i][k] == cafes[j][k]:
+                    common = common + 1
+                count_sum = count_sum + math.pow(cafes[i][k] - cafes[j][k], 2)
+            check = str(i) + " " + str(j) + " - " + str(common)
+            tanimoto_coef = common / (len(cafes[i]) + len(cafes[j]) - common)
+            euclid_coef = 1 - (math.sqrt(count_sum) / len(cafes[i]))
+            res = str(i) + " " + str(j) + " - " + str(euclid_coef)
+            cafe_matrix[i][j] = (tanimoto_coef + euclid_coef) / 2
+    print(cafe_matrix)
+    return (cafe_ids, cafe_matrix)
+
+def collaborate_filtration():
+    (cafe_ids, cafe_matrix) = create_cafe_matrix()
     
-    
+    return 1
 
 @login_required(login_url='/')
 def places(request):
+    
     collaborate_filtration()
+
     all_cities = get_cities_list()
     all_areas = get_areas_list()
     all_cuisines = get_cuisines_list()
