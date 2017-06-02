@@ -1,0 +1,87 @@
+{% extends "base1.html" %}
+{% block content %}
+
+{% load staticfiles %}
+{% load bootstrap %}
+
+
+<div style="width: 80%; margin: 0 auto; margin-top:30px; margin-bottom:30px;">
+                    <div class="features_items"><!--features_items-->
+                        <h4> Уважаемый {{ request.user.username }}! Список заведений, которые Вы отметили как понравившиеся: <br/> 
+                        </h4>
+
+                        <h2 class="title text-center">Понравившиеся Вам: </h2>
+                        {% for rec in liked %}
+                            <div class="col-sm-4" >
+                                <div id="wrap" class="product-image-wrapper" style="width:99%;">
+                                    <div class="single-products" style="width:99%;">
+                                        <div class="productinfo text-center">
+                                            {% if rec.photos.all.0 %}
+                                                <img src={{ rec.photos.all.0 }} alt="ok" style="border-radius: 10px; object-fit: cover; height:190px; width:490px"/>
+                                            {% else %}
+                                                <img src="{% static 'img/noimage.jpg' %}" height="190" width="390" style="border-radius: 10px;" alt="noimage">
+                                            {% endif %}
+                                            <h2> {{ rec.rating }} </h2>
+                                            <span class="nowrap">{{ rec.name }}</span>
+                                            <p> </p>
+                                            <p> </p>
+                                            <p><a href="/places/{{rec.id}}" class="btn btn-default add-to-cart">Подробнее</a></p>
+                                        </div>
+                                        <div class="product-overlay">
+                                            <div class="overlay-content">
+                                                {% if rec.kind.kindname == "ресторан" %}
+                                                    <p><img src="{% static 'img/icon.png' %}" height="64" width="64" alt="type" style="border-radius: 10px;"/></p>         
+                                                {% elif rec.kind.kindname == "пиццерия" %}
+                                                    <p><img src="{% static 'img/pizza.png' %}" height="68" width="68" alt="type" style="border-radius: 10px;"/></p>
+                                                {% elif rec.kind.kindname == "бар" %}
+                                                    <p><img src="{% static 'img/wine.png' %}" height="68" width="68" alt="type" style="border-radius: 10px;"/></p>
+                                                {% elif rec.kind.kindname == "паб" %}
+                                                    <p><img src="{% static 'img/beer.png' %}" height="64" width="64" alt="type" style="border-radius: 10px;"/></p>
+                                                {% else %}
+                                                    <p><img src="{% static 'img/cafe.png' %}" height="68" width="68" alt="type" style="border-radius: 10px;"/></p>
+                                                {% endif %}
+                                                <p>{{ rec.name }}</p>
+                                                <p><h2>{{ rec.rating }}</h2></p>
+                                                <p>{{ rec.formatted_address}}</p>
+
+                                                <a href="/places/{{ rec.id }}" class="btn btn-default add-to-cart">Подробнее</a>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="choose">
+                                        <ul class="nav nav-pills nav-justified">                   
+                                                
+                                            <!--<li><button style="background-color:white; border-width: 0;" type="submit"><img src="{% static 'img/book.png'%}" width='39' height='39'></button></a></li>!-->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="pagination">
+ 
+                            {% if all_cafes.has_previous %}
+                                <a href="?page={{ articles.previous_page_number }}">←</a>
+                            {% endif %}
+                         
+                            {% for num in all_cafes.paginator.page_range %}
+                                {% if num == all_cafes.number %}
+                                    <span class="current"><b>{{ num }}</b></span>
+                                {% else %}
+                                    <a href="?page={{ num }}"> {{ num }}</a>
+                                {% endif %} 
+                            {% endfor %}
+                         
+                            {% if all_cafes_list.has_next %}
+                                <a href="?page={{ article_list.next_page_number }}">→</a>
+                            {% endif %}
+                         
+                        </div>
+                        
+                    </div><!--features_items-->
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

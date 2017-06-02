@@ -1,5 +1,4 @@
 import os
-from models import *
 import numpy as np
 
 def kmeans(data, k, c):
@@ -23,7 +22,6 @@ def kmeans(data, k, c):
             centroids[index] = np.mean(cluster, axis=0).tolist()
             index += 1
 
-
     print("The total number of data instances is: " + str(len(data)))
     print("The total number of iterations necessary is: " + str(iterations))
     print("The means of each cluster are: " + str(centroids))
@@ -33,7 +31,7 @@ def kmeans(data, k, c):
         print(np.array(cluster).tolist())
         print("Cluster ends here.")
 
-    return
+    return clusters
      
 def euclidean_dist(data, centroids, clusters):
     for instance in data:  

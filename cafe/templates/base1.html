@@ -62,14 +62,14 @@
                         </li>
                         {% if user.is_authenticated %} 
                             <li> 
-                                <a href="/places"><br>Места</a>
+                                <a href={% url 'places' %}><br>Места</a>
                             </li>
                             <li>
                                 <a href="/"><br>Подобрать</a>
                             </li>
                         {% endif %}
                             <li>
-                                <a href="/"></i><br>Отзывы</a>
+                                <a href={% url 'recommend' %}></i><br>Рекомендации</a>
                             </li>
                             <li class="dropdown active">
                             {% if user.is_authenticated %}   
@@ -77,8 +77,8 @@
                                 <br>  {{ request.user.username}} <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-left" role="menu">
-                                    <li><a href="/">Перейти к профилю</a></li>
-                                    <li><a href="/">Любимые места</a></li>
+                                    <li><a href={% url 'profile' %}>Перейти к профилю</a></li>
+                                    <li><a href={% url 'liked' %}>Любимые места</a></li>
                                     <li><a href="/login/logout">Выйти</a></li>
                                 </ul>
                            

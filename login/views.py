@@ -14,12 +14,19 @@ import numpy as np
 import vk, time, operator
 from textblob.classifiers import NaiveBayesClassifier
 from textblob import TextBlob
+from .kmeans import *
+from sklearn.svm import SVC
+from sklearn.cluster import KMeans
+from celery.schedules import crontab
+from celery.task import periodic_task
+from datetime import timedelta
 
 session = vk.Session(access_token=settings.VK_TOKEN)
 api = vk.API(session)
 
-def vk_clasterization(request):
+def vk_clasterization():
     users = UserSettings.objects.all()
+    vk_info_list = []
     print('selecting users...')
     with open('trainmusic.csv', 'r') as fp:
         cl = NaiveBayesClassifier(fp, format="csv")
@@ -53,7 +60,20 @@ def vk_clasterization(request):
                     elif info['occupation']['type'] == 'school':
                         which_occupation = 3
                 followers_array = api.users.getFollowers(user_id=info['uid'])
-                how_many_followers = followers_array['count']          
+                if followers_array['count'] < 100:
+                    how_many_followers = 0
+                elif followers_array['count'] >= 100 and followers_array['count'] < 500:
+                    how_many_followers = 1
+                elif followers_array['count'] >= 500 and followers_array['count'] < 1000:
+                    how_many_followers = 2
+                elif followers_array['count'] >= 1000 and followers_array['count'] < 10000:
+                    how_many_followers = 3
+                elif followers_array['count'] >= 10000 and followers_array['count'] < 100000:
+                    how_many_followers = 4
+                elif followers_array['count'] >= 100000 and followers_array['count'] < 500000:
+                    how_many_followers = 5
+                elif followers_array['count'] >= 500000:
+                    how_many_followers = 6
                 if 'music' in info:
                     blob = TextBlob(info['music'].lower(), classifier = cl)
                     music_answer = blob.classify()
@@ -73,7 +93,9 @@ def vk_clasterization(request):
         except IndexError:
             user_vector = [has_university, has_military, which_music, which_occupation, how_many_followers]
         print(user_vector)
-    return HttpResponseRedirect('/')
+        vk_info_list.append(user_vector)
+    print(vk_info_list)
+    return vk_info_list
  
 @csrf_protect
 def register(request):
@@ -110,6 +132,22 @@ def register(request):
     'registration/register.html',
     variables,
     )
+
+@periodic_task(run_every=crontab(hour=00, minute=36))
+def update_vk_clasters():
+    vk_users_info = vk_clasterization()
+    X = np.array(vk_users_info)
+    kmeans = KMeans(n_clusters=5, random_state=None, max_iter=1000).fit(X)
+    vk_user_clasters = kmeans.labels_
+    print(vk_user_clasters)
+    users = UserSettings.objects.all()
+    step = 0
+    for u in users:
+        print('user')
+        print(u)
+        u.vkcategory = vk_user_clasters[step]
+        step += 1
+        u.save()
  
 def register_success(request):
     return render_to_response(
@@ -119,6 +157,7 @@ def register_success(request):
 def login_page(request):
     try:
         remember = request.POST['remember_me']
+        print(remember)
         if remember:
             print("remembered...")
             settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = False
@@ -129,6 +168,7 @@ def login_page(request):
             settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
             print("exception...")
     print("all right now...")
+    print(settings.SESSION_EXPIRE_AT_BROWSER_CLOSE)
     login(request)
     return HttpResponseRedirect('/')
  

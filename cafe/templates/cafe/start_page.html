@@ -147,16 +147,14 @@
     	            	<div class="col-sm-3">
     		                <div class="work wow fadeInUp">
                                 {% if cafe.photos.all.0 %}
-    		                        <img src="{{ cafe.photos.all.0 }}" alt="photo" height="200" width="240" data-at2x="{{ cafe.photos.all.0 }}">
+                                    <a href={% url 'details' cafe.id %}>
+    		                            <img src="{{ cafe.photos.all.0 }}" alt="photo" height="200" width="240" data-at2x="{{ cafe.photos.all.0 }}">
+                                    </a>
                                 {% else %}
                                     <img src="{% static 'img/noimage.jpg' %}" height="200" width="240" >
                                 {% endif %}
     		                    <h3>{{ cafe.name }}</h3>
     		                    <p>{{ cafe.rating }}</p>
-    		                    <div class="work-bottom">
-    		                        <a class="big-link-2 view-work" href="/"></a> 
-    		                        <a class="big-link-2" href="/"></a>
-    		                    </div>
     		                </div>
     	                </div>
 	                {% endfor %}

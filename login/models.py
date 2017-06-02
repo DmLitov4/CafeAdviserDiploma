@@ -20,6 +20,7 @@ class UserSettings( models.Model ):
     )
     liked = models.ManyToManyField(Cafe, null=True, blank=True)
     avatar = models.ImageField(upload_to='users/', blank = True)
+    vkcategory = models.PositiveIntegerField(blank=True, null=True)
 
     def __unicode__( self ) :
        return self.user.username

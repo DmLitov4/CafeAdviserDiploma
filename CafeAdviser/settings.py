@@ -12,7 +12,13 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import sys
+import djcelery
 
+djcelery.setup_loader()
+
+CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
+CELERY_ALWAYS_EAGER=False
+BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -42,6 +48,8 @@ INSTALLED_APPS = [
     'bootstrapform',
     'cafe',
     'login',
+    'djcelery',
+    'djkombu',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -116,6 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Europe/Moscow'
+CELERY_TIMEZONE = 'Europe/Moscow'
 
 USE_I18N = True
 

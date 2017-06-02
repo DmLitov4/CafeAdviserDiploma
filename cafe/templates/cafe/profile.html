@@ -1,0 +1,22 @@
+{% extends "base1.html" %}
+{% block content %}
+
+{% load staticfiles %}
+{% load bootstrap %}
+
+<div style="margin-bottom:20px;">
+   <img src="/static/media/{{ userrecord.avatar.url }}">
+   <h1>{{ profile.username }}</h1>
+   <h3>({{ profile.email }})</h3>
+</div>
+<div style="text-align:left; margin: auto; width: 30%; margin-bottom:20px;">
+    <p><b>Дата регистрации:</b> {{ profile.date_joined }}</p>
+    <p><b>Имя:</b> {{ profile.first_name }}</p>
+    <p><b>Фамилия:</b> {{ profile.last_name }}</p>
+    <p><b>Возраст:</b> {{ userrecord.age }}</p>
+    <p><b>Город:</b> {{ userrecord.city }} </p>
+    <p><b>Пол:</b> {{ userrecord.gender }} </p>
+</div>
+
+
+{% endblock %}
