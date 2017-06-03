@@ -19,9 +19,9 @@
 <style>
       #map {
         height: 400px;
-        width: 100%;
+        width: 80%;
        }
-    </style>
+</style>
 
 <div style="margin-left:150px" class="col-sm-9 padding-right">
                     <div class="product-details"><!--product-details-->
@@ -53,7 +53,7 @@
 
                         </div>
                         <div class="col-sm-7">
-                            <div style="text-align:left" class="product-information"><!--/product-information-->
+                            <div style="text-align:left; margin-bottom:5px;" class="product-information"><!--/product-information-->
                                 <center>
                                 {% if cafe.kind.kindname == "ресторан" %}
                                     <p><img src="{% static 'img/icon.png' %}" height="64" width="64" alt="type" style="border-radius: 10px;"/></p>         
@@ -146,31 +146,31 @@
                                 </div>
                             </div>
                         </div><!--/recommended_items-->
-                    {% endif %}
+
+                        {% else %}
+                            <div style="margin-top:5px; margin-bottom:5px;">
+                                <h4>К сожалению, пока не найдено заведений, похожих на это</h4>
+                            </div>
+                        {% endif %}
 
                     <br/><br/>
                     
 
-                    <div class="category-tab shop-details-tab"><!--category-tab-->
+                    <div style="margin-bottom:10px;" class="category-tab shop-details-tab"><!--category-tab-->
                         <div class="col-sm-12">
                             <ul class="nav nav-tabs">
-                                <li><a href="#tag" data-toggle="tab">На карте</a></li>
                                 <li class="active"><a href="#reviews" data-toggle="tab">Отзывы</a></li>
                             </ul>
                         </div>
 
-                        <div class="tab-content">
+                        <div style="margin-bottom:5px;" class="tab-content">            
                             
-                            
-                            
-                            
-                            
-                            <div class="tab-pane fade" id="tag" >
-                                    
+                            <div style="margin-bottom:5px;" class="tab-pane fade" id="tag" >
+                               
                                 
                             </div>
                             
-                            <div class="tab-pane fade active in" id="reviews" >
+                            <div style="margin-bottom:10px;" class="tab-pane fade active in" id="reviews" >
                                 <div class="col-sm-12">
                                     <ul>
                                         <li><a href=""><i class="fa fa-user"></i>DmLitov4</a></li>
@@ -186,7 +186,7 @@
                                             <input type="email" placeholder="Email Address" value={{request.user.email}} />
                                         </span>
                                         <textarea name="" ></textarea>
-                                        <b>Rating: </b> <img src="{% static 'img/product-details/rating.png' %}" alt="" />
+                                        <b>Рейтинг: </b> <img src="{% static 'img/product-details/rating.png' %}" alt="" />
                                         <button type="button" class="btn btn-default pull-right">
                                             Submit
                                         </button>
@@ -196,27 +196,33 @@
                             
                         </div>
                     </div><!--/category-tab-->
-                    
-                    <div id="map"></div>
-                                <script>
-                                      function initMap() {
-                                        var uluru = {lat: -25.363, lng: 131.044};
-                                        var map = new google.maps.Map(document.getElementById('map'), {
-                                          zoom: 4,
-                                          center: uluru
-                                        });
-                                        var marker = new google.maps.Marker({
-                                          position: uluru,
-                                          map: map
-                                        });
-                                      }
-                                    </script>
-                                    <script async defer
-                                
-                                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe6B-OrPh6i38_mq8AoAZ0589Q3SV3Jvc&callback=initMap">
-                                    </script>
-                    
             </div>
+
+            
+                <center>
+                    <div style="margin-bottom:7px;" id="map"></div>
+                </center>
+                <script>
+                                          function initMap() {
+                                            var uluru = {lat: {{lat}}, lng: {{lng}} };
+                                            var map = new google.maps.Map(document.getElementById('map'), {
+                                              zoom: 18,
+                                              center: uluru
+                                            }
+);
+                                            var marker = new google.maps.Marker({
+                                              position: uluru,
+                                              map: map
+                                            });
+                                          }
+                </script>
+                 <script
+                                    
+                                        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe6B-OrPh6i38_mq8AoAZ0589Q3SV3Jvc&callback=initMap">
+                </script>
+            
+</div>
+
 
     <script src="{% static 'js/price-range.js' %}"></script>
     <script src="{% static 'js/jquery.scrollUp.min.js' %}"></script>

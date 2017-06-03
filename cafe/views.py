@@ -225,8 +225,19 @@ def collaborate_filtration_users(request):
         return recommended
     elif userrecord.liked.count() < 10:
         print('not enough likes from current user')
-        print(userrecord.vkcategory)
-        recommended = []
+        user_vk_claster = userrecord.vkcategory
+        similar_vk_users = UserSettings.objects.annotate(num_liked=Count('liked')).filter(vkcategory=user_vk_claster, num_liked__gt=1).exclude(user_id = request.user.id)
+        print(len(similar_vk_users))
+        if len(similar_vk_users) < 1:
+            recommended = get_cafe_list()[:12]
+        else:
+            recommended = similar_vk_users[0].liked.all()
+            print(similar_vk_users)
+            print(len(similar_vk_users))
+            print(len(recommended))
+            print('sim')
+            print(recommended)
+            #recommended = []
         return recommended
     else:
         user_index = cafe_ids.tolist().index(userrecord.user_id)
@@ -358,9 +369,19 @@ def places(request):
 
 def place_details(request, cafe_id):
     cafe = get_cafe(cafe_id)
+    response = urlopen(u"https://geocode-maps.yandex.ru/1.x/?geocode=" + transliterate(cafe.formatted_address) + u'&format=json')
+    reader = codecs.getreader("utf-8")
+    data = json.load(reader(response))
+    geolocation = data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']
+    print(data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject'])
+    geolocation = geolocation.split(' ')
+    first_coord = float(geolocation[1])
+    second_coord = float(geolocation[0])
+    print(first_coord)
+    print(second_coord)
     recommended_cafe = collaborate_filtration_cafes(request, cafe_id)
     
-    return render(request, 'cafe/place_details.html', {'cafe': cafe, 'recommended': recommended_cafe})
+    return render(request, 'cafe/place_details.html', {'cafe': cafe, 'recommended': recommended_cafe, 'lat': first_coord, 'lng':second_coord})
 
 @login_required(login_url='/login/accounts/login/')
 def recommend(request):
@@ -369,8 +390,6 @@ def recommend(request):
 
 def liked(request):
     liked = user_liked(request)
-    print('liiked:')
-    print(liked)
     return render(request, 'cafe/liked.html', {'liked': liked})
 
 def get_profile(request):
