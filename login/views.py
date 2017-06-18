@@ -124,6 +124,7 @@ def register(request):
             print("wrong!")
     else:
         form = RegistrationForm()
+        update_vk_clasters()
     variables = RequestContext(request, {
     'form': form
     })
@@ -133,7 +134,6 @@ def register(request):
     variables,
     )
 
-@periodic_task(run_every=crontab(hour=00, minute=36))
 def update_vk_clasters():
     vk_users_info = vk_clasterization()
     X = np.array(vk_users_info)
